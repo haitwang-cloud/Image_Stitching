@@ -27,7 +27,6 @@ class Sort:
             image_write = image[0:image.shape[0], image.shape[1] /2:image.shape[1]]
             return image_write
 
-
         for index in np.arange(0, len(fileLists)):
             for i in np.arange(0, len(fileLists)):
                 if i != index:
@@ -39,12 +38,9 @@ class Sort:
                     stitcher = Stitcher()
                     (kpsA, featuresA) = stitcher.detectAndDescribe(imageA_left)
                     (kpsB, featuresB) = stitcher.detectAndDescribe(imageB_right)
-
-
                     M = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, 0.2,4)
                     if M == True:
                         break
-
             if M == False:
                 start = index
                 fileLists_new.append(fileLists[start])
@@ -62,22 +58,21 @@ class Sort:
                     imageB = cv2.imread(fileLists[index])
                     imageA_right = cut_right(imageA)
                     imageB_left = cut_left(imageB)
-
                     stitcher = Stitcher()
                     (kpsA, featuresA) = stitcher.detectAndDescribe(imageA_right)
                     (kpsB, featuresB) = stitcher.detectAndDescribe(imageB_left)
-
                     W = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, 0.2,4)
                     if W == True:
                         fileLists_new.append(fileLists[index])
                         print (fileLists_new)
-
-
         print("fileLists_new:")
         print (fileLists_new)
         print("图片个数：")
         print(len(fileLists_new))
         return fileLists_new
+
+
+
 
 
 '''

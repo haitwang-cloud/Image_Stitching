@@ -147,13 +147,6 @@ class Stitcher:
         for ((trainIdx, queryIdx), s) in zip(matches, status):
             ptA = (int(kpsA[queryIdx][0]), int(kpsA[queryIdx][1]))
             ptB = (int(kpsB[trainIdx][0]) + wA, int(kpsB[trainIdx][1]))
-            #            print"ptA:"
-            #            print ptA
-            #            print"ptB:"
-            #            print ptB
-            # "bbbbbbbbbbbbbbbb"
-            # print ptB[0]
-            # print ptA[0]
             dist = ptB[0] - ptA[0]
             dis.append(dist)
 
@@ -179,14 +172,6 @@ class Stitcher:
             if len(m) == 2 and m[0].distance < m[1].distance * ratio:
                 matches.append((m[0].trainIdx, m[0].queryIdx))
                 # trainIdx是featuresB的索引，queryIdx是featuresA的索引
-        #                print "matches"
-        #                print matches
-        #                print len(matches)
-        #                print "B图特征点序号"
-        #                print m[0].trainIdx
-        #                print "A图特征点序号"
-        #                print m[0].queryIdx
-
                 # 计算匹配点的homography
         if len(matches) > num:
             # 构建两组点(描述子不但包含关键点，也包括关键点周围对其有贡献的邻域点。)
