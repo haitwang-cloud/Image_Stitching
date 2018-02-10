@@ -27,12 +27,9 @@ class Stitcher:
         print '绿线长度：'
         print dist
 
-        #        t=dist-imageA.shape[1]
-        #        print '重合部分长度：'
-        #        print t
         result = np.zeros((imageA.shape[0], dist, 3), imageA.dtype)
-        while (dist<imageB.shape[1]):
-            dist+=1
+        while (dist < imageB.shape[1]):
+            dist += 1
         result = cv2.warpPerspective(imageA, H,
                                      (dist, imageA.shape[0]))
 
@@ -74,36 +71,19 @@ class Stitcher:
         # FLANN_INDEX_KDTREE = 0
         indexParams = dict(algorithm=0, trees=5)
         searchParams = dict(checks=50)  # or pass empty dictionary
-
         flann = cv2.FlannBasedMatcher(indexParams, searchParams)
-
         rawMatches = flann.knnMatch(featuresA, featuresB, k=2)
-
-
         # 计算原始匹配并初始化实际匹配的列表
         # opencv构造了特性匹配器DescriptorMatcher_create。
         # BruteForce值表示,计算两个图像中所有特征向量之间的欧氏距离，
         # 并找到最小距离的描述符对(为每个特征点找到前两个距离最小的特征描述符)
-        # matcher = cv2.DescriptorMatcher_create("BruteForce")
-        # rawMatches = matcher.knnMatch(featuresA, featuresB, 2)
-        # print "rawMatches:"
-        # print rawMatches
-
         matches = []
-
         # intqueryIdx;  //此匹配对应的查询图像的特征描述子索引(对应特征点的下标)
         # inttrainIdx;   //此匹配对应的训练(模板)图像的特征描述子索引
         # 确保距离在一定比例内(即Lowe's ratio test)
         for m in rawMatches:
             if len(m) == 2 and m[0].distance < m[1].distance * ratio:
                 matches.append((m[0].trainIdx, m[0].queryIdx))  # trainIdx是featuresB的索引，queryIdx是featuresA的索引
-        #                print "matches"
-        #                print matches
-        #                print len(matches)
-        #                print "B图特征点序号"
-        #                print m[0].trainIdx
-        #                print "A图特征点序号"
-        #                print m[0].queryIdx
 
         print("匹配点数量：")
         print(len(matches))
@@ -112,13 +92,10 @@ class Stitcher:
         if len(matches) > 4:
             # 构建两组点(描述子不但包含关键点，也包括关键点周围对其有贡献的邻域点。)
             ptsA = np.float32([kpsA[i] for (_, i) in matches])
-
             ptsB = np.float32([kpsB[i] for (i, _) in matches])
-
             # 计算单映性矩阵（findHomography函数参数包括源，目标，筛选方法，容错阈值(超过该阈值就认为是 outlier)）
             # 返回矩阵和每对匹配点的状态
             (H, status) = cv2.findHomography(ptsA, ptsB, cv2.RANSAC, raprojThresh)
-
             return (matches, H, status)
         return None
 
@@ -154,7 +131,7 @@ class Stitcher:
 
         return dist_aver
 
-    def matchKeypoints_one(self, kpsA, kpsB, featuresA, featuresB, ratio,num):
+    def matchKeypoints_one(self, kpsA, kpsB, featuresA, featuresB, ratio, num):
         # 计算原始匹配并初始化实际匹配的列表
         # opencv构造了特性匹配器DescriptorMatcher_create。
         # BruteForce值表示,计算两个图像中所有特征向量之间的欧氏距离，
@@ -164,7 +141,6 @@ class Stitcher:
         # print "rawMatches:"
         # print rawMatches
         matches = []
-
         # intqueryIdx;  //此匹配对应的查询图像的特征描述子索引(对应特征点的下标)
         # inttrainIdx;   //此匹配对应的训练(模板)图像的特征描述子索引
         # 确保距离在一定比例内(即Lowe's ratio test)

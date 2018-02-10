@@ -4,8 +4,9 @@ from panorama_opencv3 import Stitcher
 import cv2
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 
+M_parg1=0.2
+M_parg2=4
 
 class Sort:
     @staticmethod
@@ -20,11 +21,11 @@ class Sort:
         print(fileLists, len(fileLists))
 
         def cut_left(image):
-            image_left = image[0:image.shape[0], 0:image.shape[1] /2]
+            image_left = image[0:image.shape[0], 0:image.shape[1] / 2]
             return image_left
 
         def cut_right(image):
-            image_write = image[0:image.shape[0], image.shape[1] /2:image.shape[1]]
+            image_write = image[0:image.shape[0], image.shape[1] / 2:image.shape[1]]
             return image_write
 
         for index in np.arange(0, len(fileLists)):
@@ -38,7 +39,8 @@ class Sort:
                     stitcher = Stitcher()
                     (kpsA, featuresA) = stitcher.detectAndDescribe(imageA_left)
                     (kpsB, featuresB) = stitcher.detectAndDescribe(imageB_right)
-                    M = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, 0.2,4)
+                    M = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, M_parg1,
+                                                    M_parg2)
                     if M == True:
                         break
             if M == False:
@@ -53,7 +55,7 @@ class Sort:
             result = cv2.imread(fileLists_new[i])
             for index in np.arange(0, len(fileLists)):
                 if index != start:
-                    #if index != i:
+                    # if index != i:
                     imageA = result
                     imageB = cv2.imread(fileLists[index])
                     imageA_right = cut_right(imageA)
@@ -61,15 +63,22 @@ class Sort:
                     stitcher = Stitcher()
                     (kpsA, featuresA) = stitcher.detectAndDescribe(imageA_right)
                     (kpsB, featuresB) = stitcher.detectAndDescribe(imageB_left)
-                    W = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, 0.2,4)
+                    W = stitcher.matchKeypoints_one(kpsA, kpsB, featuresA, featuresB, M_parg1,
+                                                    M_parg2)
                     if W == True:
                         fileLists_new.append(fileLists[index])
                         print (fileLists_new)
-        print("fileLists_new:")
-        print (fileLists_new)
-        print("图片个数：")
-        print(len(fileLists_new))
+        print("fileLists_new:",fileLists_new)
+        print("图片个数：",len(fileLists_new))
         return fileLists_new
+
+
+
+
+
+
+
+
 
 
 
