@@ -10,3 +10,4 @@ optimizer=ps.single.GlobalBestPSO(n_particles=10,dimensions=2,options=options)
 
 #perform optimization
 best_cost,best_pos=optimizer.optimize(fx.sphere_func,iters=1000,verbose=3,print_step=25)
+print(best_pos)
