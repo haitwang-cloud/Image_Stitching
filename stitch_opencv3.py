@@ -11,7 +11,7 @@ S_parg1=0.6
 S_parg2=8
 
 start = time.time()
-filePath = '../Image_Stitching/pic_6/'
+filePath = '../Image_Stitching/pic_8/'
 fileLists_new = Sort.sorting(filePath)
 result = cv2.imread(fileLists_new[0])
 

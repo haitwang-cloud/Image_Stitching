@@ -11,23 +11,19 @@ M_parg2=4
 class Sort:
     @staticmethod
     def sorting(filePath):
-
         pathDir = os.listdir(filePath)
         fileLists = []
         fileLists_new = []
         for allDir in pathDir:
             file = os.path.join('%s%s' % (filePath, allDir))
             fileLists.append(file)
-        print(fileLists, len(fileLists))
-
+        # print(fileLists, len(fileLists))
         def cut_left(image):
             image_left = image[0:image.shape[0], 0:image.shape[1] / 2]
             return image_left
-
         def cut_right(image):
             image_write = image[0:image.shape[0], image.shape[1] / 2:image.shape[1]]
             return image_write
-
         for index in np.arange(0, len(fileLists)):
             for i in np.arange(0, len(fileLists)):
                 if i != index:
@@ -46,7 +42,7 @@ class Sort:
             if M == False:
                 start = index
                 fileLists_new.append(fileLists[start])
-                print (fileLists_new)
+                # print (fileLists_new)
                 break
 
         # 排序
@@ -67,9 +63,9 @@ class Sort:
                                                     M_parg2)
                     if W == True:
                         fileLists_new.append(fileLists[index])
-                        print (fileLists_new)
-        print("fileLists_new:",fileLists_new)
-        print("图片个数：",len(fileLists_new))
+                        # print (fileLists_new)
+        # print("fileLists_new:",fileLists_new)
+        # print("图片个数",len(fileLists_new))
         return fileLists_new
 
 

@@ -1,9 +1,19 @@
 # encoding: utf-8
 
-import numpy as np
-import cv2
-import math
 
+import cv2
+import numpy as np
+from same_opencv3 import Sort
+import pyswarms as ps
+
+S_parg1=0.6
+S_parg2=6
+
+#图片排序
+filePath = '../pic_8/'
+fileLists_new = Sort.sorting(filePath)
+result = cv2.imread(fileLists_new[0])
+#绿线长度函数
 class Stitcher:
     distance = 0
 
@@ -18,19 +28,16 @@ class Stitcher:
         # 如果没有足够的匹配点
         if M is None:
             return None
-
         # 用一个透视矩阵来拼接图像
         (matches, H, status) = M
         dist = self.distance(imageA, imageB, kpsA, kpsB, matches, status)
-        print '绿线长度：'
-        print dist
-
+        # print '绿线长度：'
+        # print dist
         result = np.zeros((imageA.shape[0], dist, 3), imageA.dtype)
         while (dist < imageB.shape[1]):
             dist += 1
         result = cv2.warpPerspective(imageA, H,
                                      (dist, imageA.shape[0]))
-
         result[0:imageB.shape[0], 0:imageB.shape[1]] = imageB
         # print "透视矩阵："
         # print H
@@ -38,10 +45,8 @@ class Stitcher:
         if showMatches:
             vis = self.drawMatches(imageA, imageB, kpsA, kpsB, matches,
                                    status)
-
             # 将全景图和可视化的元组返回给调用函数
-            return (result, vis)
-
+            return (dist,result, vis)
         return result
 
     def detectAndDescribe(self, image):
@@ -148,3 +153,18 @@ class Stitcher:
             # 返回矩阵和每对匹配点的状态
             return True
         return False
+
+def get_dist(result):
+    dist_list=[]
+    for index in np.arange(0, len(fileLists_new)):
+        if index > 0:
+            imageA = result
+            imageB = cv2.imread(fileLists_new[index])
+            stitcher = Stitcher()
+            (dist, result, vis) = stitcher.stitch([imageA, imageB], S_parg1, S_parg2, showMatches=True)
+            print(dist)
+            dist_list.append(dist)
+    return dist_list
+tmp=get_dist(result)
+print(tmp)
+
