@@ -10,7 +10,7 @@ S_parg1=0.6
 S_parg2=6
 
 #图片排序
-filePath = '../pic_8/'
+filePath = '../img/'
 fileLists_new = Sort.sorting(filePath)
 result = cv2.imread(fileLists_new[0])
 #绿线长度函数
