@@ -5,6 +5,7 @@ import pyswarms as ps
 data=load_iris()
 X=data.data
 y=data.target
+print(type(X))
 # Forward propagation
 def forward_prop(params):
     n_inputs = 4

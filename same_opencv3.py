@@ -47,7 +47,7 @@ class Sort:
 
         # 排序
         for i in np.arange(0, len(fileLists) - 1):
-            print i
+            #print i
             result = cv2.imread(fileLists_new[i])
             for index in np.arange(0, len(fileLists)):
                 if index != start:

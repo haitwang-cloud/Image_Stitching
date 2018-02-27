@@ -9,10 +9,11 @@ import pyswarms as ps
 S_parg1=0.6
 S_parg2=6
 
+
 #图片排序
 filePath = '../img/'
 fileLists_new = Sort.sorting(filePath)
-result = cv2.imread(fileLists_new[0])
+
 #绿线长度函数
 class Stitcher:
     distance = 0
@@ -154,17 +155,31 @@ class Stitcher:
             return True
         return False
 
-def get_dist(result):
+def get_dist(S_parg1):
     dist_list=[]
+    result = cv2.imread(fileLists_new[0])
     for index in np.arange(0, len(fileLists_new)):
         if index > 0:
             imageA = result
             imageB = cv2.imread(fileLists_new[index])
             stitcher = Stitcher()
             (dist, result, vis) = stitcher.stitch([imageA, imageB], S_parg1, S_parg2, showMatches=True)
-            print(dist)
             dist_list.append(dist)
     return dist_list
-tmp=get_dist(result)
-print(tmp)
+
+G_dist_r=np.array([300,400,500,600,700]) #真是的绿线长度
+G_dist_p=np.array(get_dist(0.6)) #预测的绿线长度
+
+def compute_dist(param):
+    value=G_dist_r-G_dist_p
+    loss=np.sum(value)
+    return loss
+def f(x):
+    n_particles=x.shape[0]
+    j=[]
+
+loss=compute_dist(G_dist_r,G_dist_p)
+print(loss)
+
+
 
