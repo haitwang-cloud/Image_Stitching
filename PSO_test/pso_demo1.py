@@ -8,8 +8,6 @@ import pyswarms as ps
 
 S_parg1=0.6
 S_parg2=6
-
-
 #图片排序
 filePath = '../img/'
 fileLists_new = Sort.sorting(filePath)
@@ -17,7 +15,6 @@ fileLists_new = Sort.sorting(filePath)
 #绿线长度函数
 class Stitcher:
     distance = 0
-
     def stitch(self, images, ratio, reprojThresh, showMatches=False):
         # 打开图像，检测关键点并提取本地不变描述符
         (imageB, imageA) = images
@@ -51,19 +48,14 @@ class Stitcher:
         return result
 
     def detectAndDescribe(self, image):
-
         # 我们使用了DoG关键点检测和SIFT特征提取。 `
-
         # 将图像转化为灰度图
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
         # create SIFT and detect/compute
         surf = cv2.xfeatures2d.SURF_create()
         kps, features = surf.detectAndCompute(gray, None)
-
         # 将关键点KeyPoints从KeyPoint对象转换为NumPy数组
         kps = np.float32([kp.pt for kp in kps])
-
         return (kps, features)
 
     # 匹配
@@ -86,10 +78,8 @@ class Stitcher:
         for m in rawMatches:
             if len(m) == 2 and m[0].distance < m[1].distance * ratio:
                 matches.append((m[0].trainIdx, m[0].queryIdx))  # trainIdx是featuresB的索引，queryIdx是featuresA的索引
-
         # print("匹配点数量：")
         # print(len(matches))
-
         # 计算匹配点的homography
         if len(matches) > 4:
             # 构建两组点(描述子不但包含关键点，也包括关键点周围对其有贡献的邻域点。)
@@ -109,7 +99,6 @@ class Stitcher:
         vis = np.zeros((max(hA, hB), wA + wB, 3), dtype="uint8")
         vis[0:hA, 0:wA] = imageA
         vis[0:hB, wA:] = imageB
-
         # loop the matches（status是每个匹配点的状态）
         for ((trainIdx, queryIdx), s) in zip(matches, status):
             if s == 1:
@@ -118,7 +107,6 @@ class Stitcher:
                 ptB = (int(kpsB[trainIdx][0]) + wA, int(kpsB[trainIdx][1]))
                 cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
         return vis
-
     def distance(self, imageA, imageB, kpsA, kpsB, matches, status):
         (hA, wA) = imageA.shape[:2]
         dis = []
@@ -127,9 +115,7 @@ class Stitcher:
             ptB = (int(kpsB[trainIdx][0]) + wA, int(kpsB[trainIdx][1]))
             dist = ptB[0] - ptA[0]
             dis.append(dist)
-
         dist_aver = sum(dis) / len(matches)
-
         return dist_aver
 
     def matchKeypoints_one(self, kpsA, kpsB, featuresA, featuresB, ratio, num):
@@ -154,7 +140,6 @@ class Stitcher:
             # 返回矩阵和每对匹配点的状态
             return True
         return False
-
 def get_dist(S_parg1):
     dist_list=[]
     result = cv2.imread(fileLists_new[0])
@@ -166,19 +151,29 @@ def get_dist(S_parg1):
             (dist, result, vis) = stitcher.stitch([imageA, imageB], S_parg1, S_parg2, showMatches=True)
             dist_list.append(dist)
     return dist_list
-
 G_dist_r=np.array([300,400,500,600,700]) #真是的绿线长度
-G_dist_p=np.array(get_dist(0.6)) #预测的绿线长度
 
 def compute_dist(param):
+    G_dist_p = np.array(get_dist(param))  # 预测的绿线长度
     value=G_dist_r-G_dist_p
     loss=np.sum(value)
     return loss
+
 def f(x):
     n_particles=x.shape[0]
-    j=[]
+    j=[compute_dist(x[i]) for i in range(n_particles)]
+    return np.array(j)
 
-loss=compute_dist(G_dist_r,G_dist_p)
+
+#initialize swarm
+options={'c1':0.6,'c2':0.3,'w':0.9}
+dimensions=1
+optimizer=ps.single.GlobalBestPSO(n_particles=100,dimensions=dimensions,options=options)
+#Perform optimization
+cost,pos=optimizer.optimize(f,print_step=1000,iters=1000,verbose=3)
+
+
+loss=compute_dist(S_parg1)
 print(loss)
 
 
