@@ -1,6 +1,4 @@
 # encoding: utf-8
-
-
 import cv2
 import numpy as np
 from same_opencv3 import Sort
@@ -168,9 +166,9 @@ def f(x):
 #initialize swarm
 options={'c1':0.6,'c2':0.3,'w':0.9}
 dimensions=1
-optimizer=ps.single.GlobalBestPSO(n_particles=100,dimensions=dimensions,options=options)
+optimizer=ps.single.GlobalBestPSO(n_particles=10,dimensions=dimensions,options=options)
 #Perform optimization
-cost,pos=optimizer.optimize(f,print_step=1000,iters=1000,verbose=3)
+cost,pos=optimizer.optimize(f,print_step=10,iters=100,verbose=3)
 
 
 loss=compute_dist(S_parg1)
