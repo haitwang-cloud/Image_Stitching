@@ -2,7 +2,8 @@
 import cv2
 import numpy as np
 from same_opencv3 import Sort
-
+from scipy.stats import randint as sp_randints
+from sklearn.model_selection import RandomizedSearchCV
 #import sys
 #reload(sys)
 #sys.setdefaultencoding('utf8')
@@ -156,7 +157,7 @@ def get_dist(S_parg1):
     return dist_list
 G_dist_r=np.array([300,400,500,600,700]) #真是的绿线长度
 
-def compute_dist(param):
+def compute_dist(S_parg1):
     G_dist_p = np.array(get_dist(S_parg1))  # 预测的绿线长度
     value=G_dist_r-G_dist_p
     loss=np.sum(value)
@@ -167,5 +168,10 @@ loss=compute_dist(S_parg1)
 
 print loss
 
+params_S={ "S_parg1":sp_randints(0.1,0.9)
+}
 
+n_iter_search=20
+random_search=RandomizedSearchCV(compute_dist,param_distributions=params_S,n_iter=n_iter_search
+)
 
